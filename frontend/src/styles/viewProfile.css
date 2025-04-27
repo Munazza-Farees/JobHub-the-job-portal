@@ -1,0 +1,48 @@
+/* src/styles/ViewProfile.css */
+.view-profile-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.view-profile-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.view-profile-item {
+    margin-bottom: 20px;
+}
+
+.view-profile-item strong {
+    display: inline-block;
+    width: 150px;
+    color: #555;
+}
+
+.view-profile-img {
+    display: block;
+    margin: 20px auto;
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #eee;
+}
+
+.view-resume-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.view-resume-link:hover {
+    text-decoration: underline;
+}
