@@ -1,0 +1,30 @@
+/* Add custom background and border to accordion items */
+.accordion-button {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 600;
+    border: 1px solid #ddd;
+    transition: background-color 0.3s ease;
+  }
+  
+  .accordion-button:hover {
+    background-color: #e2e6ea;
+  }
+  
+  .accordion-button:focus {
+    box-shadow: none; /* Remove default focus box-shadow */
+  }
+  
+  .accordion-button.collapsed {
+    background-color: #ffffff; /* Lighter background when collapsed */
+  }
+  
+  /* Accordion body styling */
+  .accordion-body {
+    padding: 1.25rem;
+    background-color: #fafafa;
+    border-top: 1px solid #ddd;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
