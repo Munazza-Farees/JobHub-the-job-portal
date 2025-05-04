@@ -78,14 +78,15 @@ Contributions are welcome! To contribute:
 
 This project was built by the following contributors:
 1. Vinuthna M - [GitHub](https://github.com/vinuthnamuppa)
-2. Siddartha Reddy P - GitHub
+2. Siddartha Reddy P - [GitHub](https://github.com/2003siddu)
 3. Munazza Farees - [GitHub](https://github.com/Munazza-Farees)
 4. Anudeep M - [GitHub](https://github.com/Banzero3)
 
 ## Contact
 
 For any questions or feedback, feel free to reach out:\
-Vinuthna - vinuthnamuppa@gmail.com\
+Vinuthna M - vinuthnamuppa@gmail.com\
+Siddartha Reddy P - siddarthareddy981@gmail.com\ 
 Munazza Farees - munazza.farees09@gmail.com\
-Anudeep M- anudeep.mbunny041103@gmail.com
+Anudeep M - anudeep.mbunny041103@gmail.com
 
