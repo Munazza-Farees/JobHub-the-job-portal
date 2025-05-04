@@ -86,7 +86,7 @@ This project was built by the following contributors:
 
 For any questions or feedback, feel free to reach out:\
 Vinuthna M - vinuthnamuppa@gmail.com\
-Siddartha Reddy P - siddarthareddy981@gmail.com\ 
+Siddartha Reddy P - siddarthareddy981@gmail.com\
 Munazza Farees - munazza.farees09@gmail.com\
 Anudeep M - anudeep.mbunny041103@gmail.com
 
