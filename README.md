@@ -77,7 +77,7 @@ Contributions are welcome! To contribute:
 ## Team Members
 
 This project was built by the following contributors:
-1. Vinuthna M - GitHub
+1. Vinuthna M - [GitHub](https://github.com/vinuthnamuppa)
 2. Siddartha Reddy P - GitHub
 3. Munazza Farees - [GitHub](https://github.com/Munazza-Farees)
 4. Anudeep M - [GitHub](https://github.com/Banzero3)
@@ -85,6 +85,7 @@ This project was built by the following contributors:
 ## Contact
 
 For any questions or feedback, feel free to reach out:\
+Vinuthna - vinuthnamuppa@gmail.com\
 Munazza Farees - munazza.farees09@gmail.com\
 Anudeep M- anudeep.mbunny041103@gmail.com
 
