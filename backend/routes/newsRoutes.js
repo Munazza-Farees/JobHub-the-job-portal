@@ -2,6 +2,7 @@
 import express from "express";
 import News from "../models/News.js";
 import auth from "../middleware/auth.js";
+import { createActivity } from "../controllers/activityController.js"; // Import createActivity
 
 const router = express.Router();
 
@@ -29,6 +30,9 @@ router.post("/", auth, async (req, res) => {
     });
     await news.save();
     await news.populate("postedBy", "name role");
+
+    await createActivity(req.user.userId, `Posted news: ${title} for ${company}`);
+
     res.status(201).json(news);
   } catch (error) {
     res.status(500).json({ error: "Error uploading news" });

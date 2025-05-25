@@ -30,7 +30,7 @@ const App = () => {
 
   // Show LoggedinNavbar only on specific routes
   const shouldShowNavbar = ["/setupProfile", "/homepage", "/job-provider", "/jobs-list"
-    , "/job-apply", "/activities", "/applications", "/saved-jobs", "/news"].includes(location.pathname);
+    , "/job-apply", "/activities", "/applications", "/saved-jobs", "/news", "upload-news", "upload-image"].includes(location.pathname);
 
   return (
     <AuthProvider>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ActivityPage = () => {
   const navigate = useNavigate();
@@ -45,32 +46,37 @@ const ActivityPage = () => {
     };
 
     fetchActivities();
-  }, [navigate]); // Only depend on navigate to avoid loops
+  }, [navigate]);
 
   return (
-    <div className="container-fluid">
-      <div className="container py-5">
-        <h2 className="mb-4">Your Activity</h2>
+    <div className="container-fluid min-vh-100 py-5" style={{ background: '#f5f6fa' }}>
+      <div className="container">
+        <h2 className="mb-4 fw-bold text-center">Your Activity</h2>
         <div className="card shadow-sm border-0">
           <div className="card-body">
             {loading ? (
-              <p className="text-muted">Loading activities...</p>
+              <p className="text-muted text-center">Loading activities...</p>
             ) : error ? (
-              <p className="text-danger">{error}</p>
+              <p className="text-danger text-center">{error}</p>
             ) : activities.length > 0 ? (
               activities.map((activity, index) => (
                 <div key={activity._id || index}>
                   <p className="mb-2">
-                    {activity.action} <small className="text-muted">({new Date(activity.createdAt).toLocaleString()})</small>
+                    {activity.action}{' '}
+                    <small className="text-muted">({new Date(activity.createdAt).toLocaleString()})</small>
                   </p>
                   {index < activities.length - 1 && <hr />}
                 </div>
               ))
             ) : (
-              <p className="text-muted">No activities found.</p>
+              <p className="text-muted text-center">No activities found.</p>
             )}
-            <div className="d-flex mt-3">
-              <button className="btn btn-outline-success" onClick={() => navigate(-1)} disabled={loading}>
+            <div className="text-center mt-3">
+              <button
+                className="btn btn-outline-success"
+                onClick={() => navigate(-1)}
+                disabled={loading}
+              >
                 Go Back
               </button>
             </div>

@@ -2,6 +2,7 @@ import Activity from "../models/Activity.js";
 import Job from "../models/Job.js";
 import Application from "../models/Application.js";
 
+// In activityController.js
 export const getRecentActivities = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -9,13 +10,19 @@ export const getRecentActivities = async (req, res) => {
       return res.status(401).json({ error: "Unauthorized: User ID not found" });
     }
 
-    const activities = await Activity.find({ userId })
-      .sort({ createdAt: -1 })
-      .limit(4)
-      .lean();
+    const limit = parseInt(req.query.limit) || 0;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * limit;
 
-    console.log("Fetched activities for user:", userId, activities);
-    res.status(200).json(activities);
+    const query = Activity.find({ userId }).sort({ createdAt: -1 }).lean();
+    if (limit > 0) {
+      query.limit(limit).skip(skip);
+    }
+
+    const activities = await query;
+    const total = await Activity.countDocuments({ userId });
+
+    res.status(200).json({ activities, total, page, limit });
   } catch (error) {
     console.error("Error fetching activities:", error.message);
     res.status(500).json({ error: "Server error", details: error.message });

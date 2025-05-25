@@ -1,118 +1,135 @@
-import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
+import ProfilePicture from '../components/images/Profile picture.png';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const NewsSection = () => {
+const NewsPage = () => {
   const navigate = useNavigate();
-  const { user, logout } = useContext(AuthContext);
+  const location = useLocation();
   const [news, setNews] = useState([]);
-  const [displayedNews, setDisplayedNews] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [expanded, setExpanded] = useState({}); // Track which cards are expanded
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    fetchNews();
-  }, [user, navigate]);
+    const fetchNews = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+      setLoading(true);
+      setErrorMessage(null);
+      try {
+        const response = await axios.get('http://localhost:5000/api/news', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setNews(response.data);
+      } catch (error) {
+        console.error('Error fetching news:', error);
+        setErrorMessage('Failed to load news.');
+        if (error.response?.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          navigate('/login', { replace: true });
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const fetchNews = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { data } = await axios.get("http://localhost:5000/api/news", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      setNews(data);
-      if (data.length > 0) {
-        const randomIndex = Math.floor(Math.random() * data.length);
-        setDisplayedNews(data[randomIndex]);
+    fetchNews();
+  }, [navigate]);
+
+  // Handle scrolling to a specific news article based on URL hash
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#news-', '');
+      const element = document.getElementById(`news-${id}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setExpanded((prev) => ({ ...prev, [id]: true })); // Auto-expand the referenced article
       }
-    } catch (err) {
-      console.error("Error fetching news:", err);
-      setError("Failed to load news.");
-      if (err.response?.status === 401) {
-        logout();
-        navigate("/login");
-      }
-    } finally {
-      setLoading(false);
     }
+  }, [location, news]);
+
+  // Toggle expansion of a news card
+  const toggleExpand = (id) => {
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const handleRefresh = () => {
-    if (news.length > 0) {
-      const randomIndex = Math.floor(Math.random() * news.length);
-      setDisplayedNews(news[randomIndex]);
-    }
+  // Truncate description for collapsed state
+  const truncateDescription = (description, maxLength = 100) => {
+    if (description.length <= maxLength) return description;
+    return description.substring(0, maxLength) + '...';
   };
 
   return (
-    <div className="container-fluid min-vh-100 py-5 d-flex justify-content-center align-items-center" style={{ background: "#f5f6fa" }}>
-      <div className="card shadow-sm p-5 w-100" style={{ maxWidth: "900px" }}>
-        <h2 className="card-title text-center fw-bold mb-4">News</h2>
-
-        {/* Display Random News Card */}
-        {loading ? (
-          <div className="text-center">Loading news...</div>
-        ) : error ? (
-          <div className="text-center text-danger">{error}</div>
-        ) : displayedNews ? (
-          <div className="row justify-content-center">
-            <div className="col-12 mb-4">
-              <div className="card shadow border-0 p-3">
-                <h5>{displayedNews.title}</h5>
-                <p>{displayedNews.description}</p>
-                <p><strong>Company:</strong> {displayedNews.company}</p>
-                <p><strong>Image ID:</strong> {displayedNews.imageId}</p>
-                <p>
-                  <strong>Posted By:</strong>{" "}
-                  {displayedNews.postedBy && displayedNews.postedBy.name
-                    ? `${displayedNews.postedBy.name} (${displayedNews.postedBy.role || "Unknown Role"})`
-                    : "Unknown Author"}
-                </p>
-                <p>
-                  <strong>Posted On:</strong>{" "}
-                  {displayedNews.postedAt
-                    ? new Date(displayedNews.postedAt).toLocaleDateString()
-                    : "Unknown Date"}
-                </p>
+    <div className="container-fluid min-vh-100 py-5" style={{ background: '#f5f6fa', fontFamily: 'Arial' }}>
+      <div className="row justify-content-center">
+        <div className="col-12 col-lg-10">
+          <h2 className="text-center fw-bold mb-4">Company News</h2>
+          {loading ? (
+            <p className="text-center">Loading news...</p>
+          ) : errorMessage ? (
+            <p className="text-danger text-center">{errorMessage}</p>
+          ) : news.length > 0 ? (
+            news.map((item) => (
+              <div
+                key={item._id}
+                id={`news-${item._id}`}
+                className="card mb-3 shadow-sm"
+              >
+                <div className="card-body d-flex align-items-start">
+                  <div className="company-logos me-3">
+                    <img
+                      src={item.imageId?.path ? `http://localhost:5000${item.imageId.path}` : ProfilePicture}
+                      alt={item.company || 'Company'}
+                      style={{ width: 100, height: 70, borderRadius: '10px', objectFit: 'contain' }}
+                      onError={(e) => {
+                        e.target.src = ProfilePicture;
+                      }}
+                    />
+                  </div>
+                  <div className="w-100">
+                    <h5 className="card-title">{item.title || 'Untitled'}</h5>
+                    <p className="text-muted mb-2">{item.company}</p>
+                    <p>
+                      {expanded[item._id]
+                        ? item.description || 'No description available'
+                        : truncateDescription(item.description || 'No description available')}
+                    </p>
+                    <button
+                      className="btn btn-link p-0"
+                      onClick={() => toggleExpand(item._id)}
+                      style={{ textDecoration: 'none' }}
+                    >
+                      {expanded[item._id] ? 'Show Less' : 'Read More'} ▼
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
+            ))
+          ) : (
+            <p className="text-center">No news available</p>
+          )}
+          <div className="d-flex text-center mt-4 gap-2 justify-content-center">
+            <button
+              className="btn btn-outline-primary"
+              onClick={() => navigate('/upload-news')}
+              disabled={loading}
+            >
+              Post News
+            </button>
+            <button className="btn btn-outline-warning" onClick={() => navigate('/homepage')}>
+              Go back
+            </button>
           </div>
-        ) : (
-          <div className="text-center text-muted">No news found.</div>
-        )}
-
-        {/* Buttons */}
-        <div className="d-flex gap-2 justify-content-center mt-4">
-          <button
-            className="btn btn-outline-primary"
-            onClick={() => navigate("/upload-news")}
-          >
-            Post News
-          </button>
-          <button
-            className="btn btn-outline-danger"
-            onClick={handleRefresh}
-            disabled={loading || news.length === 0}
-          >
-            Refresh
-          </button>
-          <button
-            className="btn btn-outline-success"
-            onClick={() => navigate("/news")}
-          >
-            More News
-          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default NewsSection;
+export default NewsPage;

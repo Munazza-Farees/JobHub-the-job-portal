@@ -35,14 +35,16 @@ const Homepage = () => {
           axios.get('http://localhost:5000/api/skills', {
             headers: { Authorization: `Bearer ${token}` },
           }),
+          // Fetch only the 5 most recent activities
           axios.get('http://localhost:5000/api/activities', {
             headers: { Authorization: `Bearer ${token}` },
+            params: { limit: 5 }, // Pass limit as a query parameter
           }),
         ]);
 
         setUser(profileResponse.data);
         setJobs(jobsResponse.data);
-        setNews(newsResponse.data);
+        setNews(newsResponse.data.slice(0, 5)); // Limit to top 5 news
         setSkills(skillsResponse.data);
         setActivities(activityResponse.data);
       } catch (error) {
@@ -78,6 +80,11 @@ const Homepage = () => {
       console.error('Error navigating to search:', error);
       setErrorMessage('Failed to perform search.');
     }
+  };
+
+  const truncateDescription = (description, maxLength = 100) => {
+    if (description.length <= maxLength) return description;
+    return description.substring(0, maxLength) + '...';
   };
 
   return (
@@ -129,14 +136,24 @@ const Homepage = () => {
                           alt={item.company || 'Company'}
                           style={{ width: 70, height: 50, borderRadius: '10px', objectFit: 'contain' }}
                           onError={(e) => {
-                            e.target.src = ProfilePicture; // Fallback if image fails to load
+                            e.target.src = ProfilePicture;
                           }}
                         />
                       </div>
-                      <div className="company-details w-auto">
+                      <div className="company-details w-100">
                         <li className="list-group-item justify-content-between w-auto h-auto" style={{ border: 'none' }}>
                           <strong>{item.title || 'Untitled'}</strong>
-                          <p>{item.description || 'No description available'}</p>
+                          <p>{truncateDescription(item.description || 'No description available')}</p>
+                          <a
+                            href={`/news#news-${item._id}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              navigate(`/news#news-${item._id}`);
+                            }}
+                            className="text-primary"
+                          >
+                            Read More
+                          </a>
                         </li>
                       </div>
                     </div>
@@ -145,6 +162,10 @@ const Homepage = () => {
                   <p>No news available</p>
                 )}
               </ul>
+              <div className='d-flex d-grid gap-2 justify-content-center m-3'>
+                <button className='btn btn-outline-warning' onClick={() => navigate('/upload-news')}>Post News</button>
+                <button className='btn btn-outline-danger' onClick={() => navigate('/news')}>View More</button>
+              </div>
             </div>
 
             <div className="card p-3 h-auto">
@@ -195,14 +216,14 @@ const Homepage = () => {
                 ) : (
                   <p>No jobs found</p>
                 )}
-                <div className="d-flex d-grid gap-2 justify-content-center m-3">
+                <div className="d-flex gap-2 justify-content-center m-3 w-100">
                   {user?.role === "jobprovider" && (
-                    <button className="btn btn-outline-primary m-1" onClick={() => navigate("/job-provider")} disabled={loading}>
+                    <button className="btn btn-outline-primary" onClick={() => navigate("/job-provider")} disabled={loading}>
                       Post Job
                     </button>
                   )}
                   {(user?.role === "jobseeker" || user?.role === "jobprovider") && (
-                    <button className="btn btn-outline-primary m-1" onClick={() => navigate("/jobs-list")} disabled={loading}>
+                    <button className="btn btn-success" onClick={() => navigate("/jobs-list")} disabled={loading}>
                       View More
                     </button>
                   )}
@@ -284,7 +305,10 @@ const Homepage = () => {
                 ) : activities.length > 0 ? (
                   activities.map((activity, index) => (
                     <div key={activity._id || index}>
-                      <p className="mb-2">{activity.action}</p>
+                      <p className="mb-2">
+                        {activity.action}{' '}
+                        <small className="text-muted">({new Date(activity.createdAt).toLocaleString()})</small>
+                      </p>
                       {index < activities.length - 1 && <hr />}
                     </div>
                   ))

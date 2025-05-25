@@ -5,7 +5,7 @@ const newsSchema = new mongoose.Schema({
   description: { type: String, required: true },
   company: { type: String, required: true },
   imageId: { type: mongoose.Schema.Types.ObjectId, ref: 'Image', required: true }, 
-  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User"},
   postedAt: { type: Date, default: Date.now },
 });
 

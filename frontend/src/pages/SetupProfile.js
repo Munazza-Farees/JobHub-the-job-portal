@@ -309,7 +309,7 @@ const SetupProfile = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log('Profile fetched:', response.data);
-        setProfile({ ...response.data, profilePicture: null }); // Reset profilePicture to avoid file issues
+        setProfile({ ...response.data, profilePicture: null }); 
       } catch (error) {
         const errorMessage = error.response?.data?.message || error.message;
         console.error('Error fetching profile:', error.response?.data || error);
